@@ -25,43 +25,28 @@ Output: [8,5,10,1,7,null,12]
  */
 class Solution {
 private:
-    TreeNode *util(vector<int> &preorder, int start, int end) {
+    TreeNode *constructTree(vector<int> &preorder, int start, int end) {
         if(start > end) {
             return NULL;
         }
         
-        int pos = INT_MAX;
+        int pos;
         for(int i=start; i<=end; i++) {
-            if(preorder[start] < preorder[i]) {
+            if(preorder[i] > preorder[start]) {
                 pos = i;
                 break;
             }
         }
         
         TreeNode *root = new TreeNode(preorder[start]);
-        
-        if(pos != INT_MAX) {
-            /*
-                all number smaller than root will be on left
-                & greater than root will be on right.
-            */
-            root->left = util(preorder, start+1, pos-1);
-            root->right = util(preorder, pos, end);
-        }
-        else {
-            /* 
-                for left skewed trees
-                [3,2,1]
-            */
-            root->left = util(preorder, start+1, end);
-        }
+        root->left = constructTree(preorder, start+1, pos-1);
+        root->right = constructTree(preorder, pos, end);
         
         return root;
     }
     
-    
 public:
     TreeNode* bstFromPreorder(vector<int>& preorder) {
-        return util(preorder, 0, preorder.size()-1);
+        return constructTree(preorder, 0, preorder.size()-1);
     }
 };
